@@ -1,4 +1,5 @@
 import Foundation
+import FoundationNetworking
 
 /// Downloader: A helper class to download files.
 public class Downloader {
