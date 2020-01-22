@@ -15,12 +15,16 @@ struct MNISTIterator: S5TFDatasetIterator {
     typealias _Dataset = MNIST // swiftlint:disable:this type_name
     var dataset: MNIST
 
-    var count = 0
+    private var index = 0
+
+    init(dataset: MNIST) {
+        self.dataset = dataset
+    }
 
     mutating func next() -> MNISTBatch? {
-        guard count < dataset.data.count else { return nil }
-        let data = dataset.data[count]
-        count += 1
+        guard index < dataset.data.count else { return nil }
+        let data = dataset.data[index]
+        index += 1
         return MNISTBatch(data: data[0], labels: data[1])
     }
 }
