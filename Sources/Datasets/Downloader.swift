@@ -1,5 +1,7 @@
 import Foundation
-import FoundationNetworking
+#if canImport(FoundationNetworking)
+    import FoundationNetworking
+#endif
 
 /// Downloader: A helper class to download files.
 public class Downloader {
