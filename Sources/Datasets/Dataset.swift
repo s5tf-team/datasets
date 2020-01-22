@@ -3,4 +3,6 @@ protocol S5TFDataset {
     func batched(_ batchSize: Int) -> _Iterator
 }
 
-protocol S5TFDatasetIterator: Sequence, IteratorProtocol {}
+protocol S5TFDatasetIterator: Sequence, IteratorProtocol where _Dataset: S5TFDataset {
+    associatedtype _Dataset // swiftlint:disable:this type_name
+}

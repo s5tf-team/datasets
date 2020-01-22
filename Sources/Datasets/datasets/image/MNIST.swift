@@ -12,6 +12,7 @@ struct MNIST: S5TFDataset {
 }
 
 struct MNISTIterator: S5TFDatasetIterator {
+    typealias _Dataset = MNIST // swiftlint:disable:this type_name
     var dataset: MNIST
 
     var count = 0
