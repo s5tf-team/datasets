@@ -3,7 +3,7 @@ public struct MNISTBatch: S5TFLabeledBatch {
     public var labels: Int
 }
 
-let MNISTInfo = S5TFDatasetInfo(
+public let MNISTInfo = S5TFDatasetInfo(
     name: "mnist",
     version: "0.0.1",
     description: "The MNIST database of handwritten digits. 60000 train examples and 10000 test examples with image and label features.",

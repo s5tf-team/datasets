@@ -9,16 +9,9 @@ protocol S5TFDatasetIterator: Sequence, IteratorProtocol where _Dataset: S5TFDat
 }
 
 public struct S5TFDatasetInfo {
-	var name = ""
-	var version = ""
-	var description = ""
-	var homepage = ""
-	var citation = ""
-	public init(name: String = "", version: String = "", description: String = "", homepage: String = "", citation: String = "") {
-		self.name = name
-		self.version = version
-		self.description = description
-		self.homepage = homepage
-		self.citation = citation
-	}
+    var name: String
+    var version: String
+    var description: String
+    var homepage: String
+    var citation: String?
 }
