@@ -7,10 +7,10 @@ let package = Package(
     products: [
         .library(
             name: "Datasets",
-            targets: ["Datasets"]),
+            targets: ["Datasets"])
     ],
     dependencies: [
-        .package(url: "https://github.com/tensorflow/swift-apis/", .branch("tensorflow-0.6")),
+        .package(url: "https://github.com/tensorflow/swift-apis/", .branch("tensorflow-0.6"))
     ],
     targets: [
         .target(
@@ -18,6 +18,6 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "DatasetsTests",
-            dependencies: ["Datasets"]),
+            dependencies: ["Datasets"])
     ]
 )
