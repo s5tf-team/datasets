@@ -8,34 +8,57 @@ public class Downloader: NSObject {
     private lazy var session = URLSession(configuration: .default,
                                           delegate: self,
                                           delegateQueue: nil)
-    private var localPath: String?
+
+    private var saveURL: URL?
     private var completionHandler: ((URL?, Error?) -> Void)?
     private var semaphore: DispatchSemaphore?
     private var startingTime: Date?
 
-    /// Downloads a file.
-    ///
-    /// - Parameters:
-    ///   - `fileAt`: the remote url
-    ///   - `to`: the local path
-    ///   - `completionHandler`: will be called upon completion. First item might be the local path,
-    ///                          second item might be an error. If the item can't be saved to the local
-    ///                          url an error will be returned.
-    public func download(fileAt remoteUrl: URL,
-                         to localPath: String,
-                         completionHandler: @escaping (URL?, Error?) -> Void) {
-        self.localPath = localPath
-        download(fileAt: remoteUrl, completionHandler: completionHandler)
-    }
+    private var baseURL: URL = {
+        // Create the base directory in the users home directory if non-existent.
+        let home = URL(string: NSHomeDirectory())!
+        let baseURL = home.appendingPathComponent(".s5tf-datasets")
+        if !FileManager.default.fileExists(atPath: baseURL.absoluteString) {
+            // Force the creation because if we can't create the path, something is
+            // seriously wrong.
+            try! FileManager.default.createDirectory(atPath: baseURL.absoluteString,
+                                                    withIntermediateDirectories: false,
+                                                    attributes: nil)
+        }
+        return baseURL
+    }()
 
     /// Downloads a file.
     ///
     /// - Parameters:
     ///   - `fileAt`: the remote url
+    ///   - `cacheName`: the directory in the base directory where the file will be saved. This
+    ///                  directory should be consistent with subsequent requests to enable caching.
+    ///   - `fileName`: the desired file name of the local file.
     ///   - `completionHandler`: will be called upon completion. First item might be the local path,
     ///                          second item might be an error. If the item can't be saved to the local
     ///                          url an error will be returned.
-    public func download(fileAt remoteUrl: URL, completionHandler: @escaping (URL?, Error?) -> Void) {
+    public func download(fileAt remoteUrl: URL,
+                         cacheName: String,
+                         fileName: String,
+                         completionHandler: @escaping (URL?, Error?) -> Void) {
+        // Create a cache directory if non-existent.
+        let cacheURL = baseURL.appendingPathComponent(cacheName, isDirectory: true)
+        if !FileManager.default.fileExists(atPath: cacheURL.absoluteString) {
+            try! FileManager.default.createDirectory(atPath: cacheURL.absoluteString,
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
+        }
+
+        // Check whether the file is already downloaded.
+        let saveURL = cacheURL.appendingPathComponent(fileName, isDirectory: false)
+        if FileManager.default.fileExists(atPath: saveURL.absoluteString) {
+            completionHandler(saveURL, nil)
+            return
+        } else {
+            self.saveURL = saveURL
+        }
+
         // Start a new download task. Use a semaphore to wait for the download progress to finish
         // before we continue execution.
         semaphore = DispatchSemaphore(value: 0)
@@ -86,16 +109,9 @@ extension Downloader: URLSessionDownloadDelegate {
 
         // Move the file to the desired local URL.
         do {
-            let documentsURL = try
-            FileManager.default.url(for: .documentDirectory,
-                                    in: .userDomainMask,
-                                    appropriateFor: nil,
-                                    create: false)
-            if localPath == nil { localPath = location.lastPathComponent}
-            let savedURL = documentsURL.appendingPathComponent(localPath!)
-            completionHandler?(savedURL, nil)
-            try FileManager.default.moveItem(at: location, to: savedURL)
-            localPath = nil
+            try FileManager.default.moveItem(at: location, to: URL(string: "file://"+saveURL!.absoluteString)!)
+            completionHandler?(saveURL!, nil)
+            saveURL = nil
         } catch {
             completionHandler?(nil, error)
         }
@@ -107,6 +123,7 @@ extension Downloader: URLSessionDownloadDelegate {
         print("\n") // Keep the progress bar.
         semaphore?.signal()
         startingTime = nil
+        saveURL = nil
         completionHandler?(nil, error)
     }
 }
