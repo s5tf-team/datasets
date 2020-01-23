@@ -1,6 +1,7 @@
 protocol S5TFDataset {
     associatedtype _Iterator // swiftlint:disable:this type_name
     func batched(_ batchSize: Int) -> _Iterator
+    var split : S5TFSplit { get set }
     var info: S5TFDatasetInfo { get }
 }
 
@@ -14,4 +15,12 @@ public struct S5TFDatasetInfo {
     var description: String
     var homepage: String
     var citation: String?
+}
+
+public enum S5TFSplit {
+    case train
+    case validation
+    case test
+    case all
+    case undefined
 }
