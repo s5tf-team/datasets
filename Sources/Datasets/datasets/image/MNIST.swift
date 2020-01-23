@@ -64,6 +64,7 @@ public struct MNIST: S5TFDataset {
     }
 
     public let split: S5TFSplit
+    
     public init() { self.split = .undefined }
     private init(split: S5TFSplit) {
         self.split = split
