@@ -47,18 +47,38 @@ public struct MNIST: S5TFDataset {
         return MNISTIterator(dataset: self)
     }
 
-    public var split: S5TFSplit
-    init() { self.split = .undefined }
+    public var train: MNIST {
+        guard self.split == .undefined else { fatalError("This property can only be accessed from an undefined split.") }
+        return MNIST(split: .train)
+    }
+    public var validation: MNIST {
+        fatalError("The split does not exist for this dataset.")
+    }
+    public var test: MNIST {
+        guard self.split == .undefined else { fatalError("This property can only be accessed from an undefined split.") }
+        return MNIST(split: .test)
+    }
+    public var all: MNIST {
+        guard self.split == .undefined else { fatalError("This property can only be accessed from an undefined split.") }
+        return MNIST(split: .all)
+    }
+
+    public let split: S5TFSplit
+    public init() { self.split = .undefined }
     private init(split: S5TFSplit) {
         self.split = split
         let downloader = Downloader()
         func getTrain() {
-            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/train-images-idx3-ubyte.gz")!) { url, error in }
-            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/train-labels-idx1-ubyte.gz")!) { url, error in }
+            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/train-images-idx3-ubyte.gz")!,
+            					cacheName: "mnist", fileName: "mnist_train_images") { url, error in }
+            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/train-labels-idx1-ubyte.gz")!,
+            					cacheName: "mnist", fileName: "mnist_train_labels") { url, error in }
         }
         func getTest() {
-            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-images-idx3-ubyte.gz")!) { url, error in }
-            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-labels-idx1-ubyte.gz")!) { url, error in }
+            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-images-idx3-ubyte.gz")!,
+            					cacheName: "mnist", fileName: "mnist_test_images") { url, error in }
+            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-labels-idx1-ubyte.gz")!,
+            					cacheName: "mnist", fileName: "mnist_test_labels") { url, error in }
         }
         switch split {
             case .train:
@@ -72,22 +92,6 @@ public struct MNIST: S5TFDataset {
                 break            
         }
     }
-    var train : MNIST {
-        guard self.split == .undefined else { fatalError("this property can only be accessed from an undefined split") }
-        return MNIST(split: .train)
-    }
-    var validation : MNIST {
-        fatalError("the split does not exist for this dataset")
-    }
-    var test : MNIST {
-        guard self.split == .undefined else { fatalError("this property can only be accessed from an undefined split") }
-        return MNIST(split: .test)
-    }
-    var all : MNIST {
-        guard self.split == .undefined else { fatalError("this property can only be accessed from an undefined split") }
-        return MNIST(split: .all)
-    }
 
     public var info = MNISTInfo
-    public init() {}
 }
