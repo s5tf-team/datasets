@@ -42,7 +42,7 @@ public class Downloader: NSObject {
                          cacheName: String,
                          fileName: String,
                          completionHandler: @escaping (URL?, Error?) -> Void) {
-        // Create a chache directory if non-existent.
+        // Create a cache directory if non-existent.
         let cacheURL = baseURL.appendingPathComponent(cacheName, isDirectory: true)
         if !FileManager.default.fileExists(atPath: cacheURL.absoluteString) {
             try! FileManager.default.createDirectory(atPath: cacheURL.absoluteString,
