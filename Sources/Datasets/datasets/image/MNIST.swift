@@ -64,21 +64,22 @@ public struct MNIST: S5TFDataset {
     }
 
     public let split: S5TFSplit
-    
+
     public init() { self.split = .undefined }
     private init(split: S5TFSplit) {
         self.split = split
         let downloader = Downloader()
+        let baseURL = "https://storage.googleapis.com/cvdf-datasets/mnist"
         func getTrain() {
-            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/train-images-idx3-ubyte.gz")!,
+            downloader.download(fileAt: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
             					cacheName: "mnist", fileName: "mnist_train_images") { url, error in }
-            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/train-labels-idx1-ubyte.gz")!,
+            downloader.download(fileAt: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
             					cacheName: "mnist", fileName: "mnist_train_labels") { url, error in }
         }
         func getTest() {
-            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-images-idx3-ubyte.gz")!,
+            downloader.download(fileAt: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
             					cacheName: "mnist", fileName: "mnist_test_images") { url, error in }
-            downloader.download(fileAt: URL(string: "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-labels-idx1-ubyte.gz")!,
+            downloader.download(fileAt: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
             					cacheName: "mnist", fileName: "mnist_test_labels") { url, error in }
         }
         switch split {
