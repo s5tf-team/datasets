@@ -43,4 +43,5 @@ public struct MNIST: S5TFDataset {
         return MNISTIterator(dataset: self)
     }
     public var info = MNISTInfo
+    public init() {}
 }
