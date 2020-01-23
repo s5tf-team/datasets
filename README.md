@@ -10,6 +10,7 @@ for batch in mnist.batched(32) {
     print(batch.data, batch.labels)
 }
 ```
+View an interactive Google Colab example [here](https://colab.research.google.com/drive/12ny4R0RyUajdTaq42rqeBmqHIIo6FzKc).
 
 ## Contributing ❤️
 Thanks for even considering contributing.
