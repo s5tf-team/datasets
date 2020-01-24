@@ -1,17 +1,18 @@
-protocol S5TFDataset {
-    associatedtype _Iterator // swiftlint:disable:this type_name
-    func batched(_ batchSize: Int) -> _Iterator
-    var info: S5TFDatasetInfo { get }
+import Foundation
+
+protocol S5TFDataLoader: Sequence, IteratorProtocol {
+    func batched(_ batchSize: UInt) -> Self
 }
 
-protocol S5TFDatasetIterator: Sequence, IteratorProtocol where _Dataset: S5TFDataset {
-    associatedtype _Dataset // swiftlint:disable:this type_name
+protocol S5TFDataset where DataLoader: S5TFDataLoader {
+    associatedtype DataLoader
+    static var info: S5TFDatasetInfo { get }
+    static var train: DataLoader { get }
 }
 
 public struct S5TFDatasetInfo {
     var name: String
     var version: String
     var description: String
-    var homepage: String
-    var citation: String?
+    var homepage: URL
 }
