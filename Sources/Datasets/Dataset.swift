@@ -1,7 +1,7 @@
 import Foundation
 
 protocol S5TFDataLoader: Sequence, IteratorProtocol {
-    func batched(_ batchSize: UInt) -> Self
+    func batched(_ batchSize: Int) -> Self
 }
 
 protocol S5TFDataset where DataLoader: S5TFDataLoader {
