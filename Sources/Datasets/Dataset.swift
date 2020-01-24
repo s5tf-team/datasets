@@ -7,7 +7,7 @@ protocol S5TFDataLoader: Sequence, IteratorProtocol {
 
 protocol S5TFDataset where DataLoader: S5TFDataLoader {
     associatedtype DataLoader
-    static var info: String { get }
+    static var info: S5TFDatasetInfo { get }
     static var train: DataLoader { get }
     static var validation: DataLoader { get }
 }
