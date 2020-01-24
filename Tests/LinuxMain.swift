@@ -3,5 +3,6 @@ import XCTest
 import DatasetsTests
 
 var tests = [XCTestCaseEntry]()
-tests += datasetsTests.allTests()
+tests += DatasetsTests.__allTests()
+
 XCTMain(tests)
