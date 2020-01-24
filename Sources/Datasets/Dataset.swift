@@ -1,3 +1,5 @@
+import Foundation
+
 protocol S5TFDataLoader: Sequence, IteratorProtocol {
     func batched(_ batchSize: UInt) -> Self
     func shuffled() -> Self

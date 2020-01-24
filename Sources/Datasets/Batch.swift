@@ -1,10 +1,10 @@
 protocol S5TFBatch {}
 
-struct S5TFUnlabeledBatch: S5TFBatch {
-    var data: Float { get }
+public struct S5TFUnlabeledBatch: S5TFBatch {
+    var data: Float
 }
 
-struct S5TFLabeledBatch: S5TFBatch {
-    var data: Int { get }
-    var labels: Int { get }
+public struct S5TFLabeledBatch: S5TFBatch {
+    var data: Int
+    var labels: Int
 }
