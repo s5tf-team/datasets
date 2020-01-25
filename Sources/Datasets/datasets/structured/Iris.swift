@@ -62,43 +62,44 @@ public struct IrisDataLoader: S5TFDataLoader {
 
         // Download necessary files.
         let semaphore = DispatchSemaphore(value: 0)
-        var csvUrl: URL? = nil
+        var csvURL: URL? = nil
         print("Fetching files... Waiting for the download to finish before continuing...")
         Downloader().download(fileAt: URL(string: "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")!,
-            cacheName: "iris", fileName: "iris.csv") { url, err in
+            cacheName: "iris", fileName: "iris.csv") { url, error in
             guard let url = url else {
-                fatalError("URL not saved.")
+                if let error = error { print(error) }
+                fatalError("Data not could not be downloaded downloaded.")
             }
-            csvUrl = url
+            csvURL = url
             semaphore.signal()
         }
         semaphore.wait()
 
         // Load data.
-        let rawData = try! String(contentsOfFile: csvUrl!.absoluteString)
+        let rawData = try! String(contentsOfFile: csvURL!.absoluteString)
         // Use a flattened array because Swift does not support 2 dimensional arrays for initialization.
-        var XValues = [Float]()
-        var yValues = [Int32]()
+        var featureValues = [Float]()
+        var labelValues = [Int32]()
         for line in rawData.split(separator: "\n") {
         let items = line.split(separator: ",")
             // Load features.
-            // TOOD: use broadcasting when it's available.
+            // TODO: use broadcasting when it's available.
             for j in 0...3 {
-                XValues.append(Float(items[j])!)
+                featureValues.append(Float(items[j])!)
             }
 
             // Load labels.
             switch items[4] {
-            case "Iris-setosa": yValues.append(0)
-            case "Iris-versicolor": yValues.append(1)
-            case "Iris-virginica": yValues.append(2)
+            case "Iris-setosa": labelValues.append(0)
+            case "Iris-versicolor": labelValues.append(1)
+            case "Iris-virginica": labelValues.append(2)
             default: fatalError("Unkown label: \(items[4])")
             }
         }
 
         // Convert so Swift Tensors and store on self.
-        self.data = Tensor<Float>(XValues).reshaped(to: TensorShape(Iris.numberOfTrainingExamples, Iris.numberOfFeatures))
-        self.labels = Tensor<Int32>(yValues)
+        self.data = Tensor<Float>(featureValues).reshaped(to: TensorShape(Iris.numberOfTrainingExamples, Iris.numberOfFeatures))
+        self.labels = Tensor<Int32>(labelValues)
     }
 
     private init(batchSize: Int, data: Tensor<Float>, labels: Tensor<Int32>) {
@@ -113,7 +114,7 @@ public struct IrisDataLoader: S5TFDataLoader {
 
     // MARK: Data loaders
     public func batched(_ batchSize: Int) -> IrisDataLoader {
-        return IrisDataLoader(batchSize: 1,
+        return IrisDataLoader(batchSize: batchSize,
                               data: self.data,
                               labels: self.labels)
     }
@@ -127,18 +128,18 @@ public struct IrisDataLoader: S5TFDataLoader {
         let thisBatchSize = Swift.min(Iris.numberOfTrainingExamples - index - batchSize, batchSize)
 
         // TODO: update with broadcoasting.
-        var batchX = [Float]()
-        var batchy = [Int32]()
+        var batchFeatures = [Float]()
+        var batchLabels = [Int32]()
 
         for i in index..<(index + thisBatchSize) {
             for j in data[i].array {
-                batchX.append(j.scalar!)
+                batchFeatures.append(j.scalar!)
             }
-            batchy.append(labels[i].scalar!)
+            batchLabels.append(labels[i].scalar!)
         }
 
-        let data = Tensor<Float>(batchX).reshaped(to: TensorShape(thisBatchSize, Iris.numberOfFeatures))
-        let labels = Tensor<Int32>(batchy)
+        let data = Tensor<Float>(batchFeatures).reshaped(to: TensorShape(thisBatchSize, Iris.numberOfFeatures))
+        let labels = Tensor<Int32>(batchLabels)
 
         self.index += thisBatchSize
 
