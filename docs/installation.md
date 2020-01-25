@@ -19,7 +19,7 @@ Add the following line to `dependencies` in your `Package.swift` file:
 .package(url: "https://github.com/s5tf-team/datasets", .branch("master"))
 ```
 
-Then add `"S5TF"` as a dependency to a target:
+Then add `"Datasets"` as a dependency to a target:
 
 ```swift
 dependencies: ["Datasets"]
