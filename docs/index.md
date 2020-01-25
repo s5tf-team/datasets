@@ -6,4 +6,4 @@ Welcome to s5tf/datasets!
 
 ## Contents
 
-* [Installation](/installation.html)
+* [Installation](installation.html)
