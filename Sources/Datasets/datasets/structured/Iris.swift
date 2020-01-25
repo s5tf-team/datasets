@@ -68,7 +68,7 @@ public struct IrisDataLoader: S5TFDataLoader {
             cacheName: "iris", fileName: "iris.csv") { url, error in
             guard let url = url else {
                 if let error = error { print(error) }
-                fatalError("Data not could not be downloaded downloaded.")
+                fatalError("Data not could not be downloaded.")
             }
             csvURL = url
             semaphore.signal()
