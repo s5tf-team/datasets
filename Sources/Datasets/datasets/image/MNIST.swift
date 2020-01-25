@@ -45,9 +45,10 @@ public struct MNISTDataLoader: S5TFDataLoader {
         var labelURL: URL? = nil
 
         print("Fetching files... Waiting for the download to finish before continuing...")
+        let downloader = Downloader()
         switch split {
             case .train:
-                Downloader().download(fileAt: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
+                downloader.download(fileAt: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
                                       cacheName: "mnist", fileName: "mnist_train_images") { url, err in
                                       guard let url = url else {
                                       fatalError("Data not downloaded.")
@@ -56,7 +57,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
                                       semaphore.signal()
                                     }
                 semaphore.wait()
-                Downloader().download(fileAt: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
+                downloader.download(fileAt: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
                                       cacheName: "mnist", fileName: "mnist_train_labels") { url, err in
                                       guard let url = url else {
                                       fatalError("Data not downloaded.")
@@ -66,7 +67,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
                                     }
                 semaphore.wait()
             case .test:
-                Downloader().download(fileAt: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
+                downloader.download(fileAt: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
                                       cacheName: "mnist", fileName: "mnist_test_images") { url, err in
                                       guard let url = url else {
                                       fatalError("Data not downloaded.")
@@ -75,7 +76,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
                                       semaphore.signal()
                                     }
                 semaphore.wait()
-                Downloader().download(fileAt: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
+                downloader.download(fileAt: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
                                       cacheName: "mnist", fileName: "mnist_test_labels") { url, err in
                                       guard let url = url else {
                                       fatalError("Data not downloaded.")
