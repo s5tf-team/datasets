@@ -32,7 +32,7 @@ public struct Iris: S5TFDataset {
             cacheName: "iris", fileName: "iris.csv") { url, error in
             guard let url = url else {
                 if let error = error { print(error) }
-                fatalError("Data not could not be downloaded.")
+                fatalError("Data could not be downloaded.")
             }
             csvURL = url
             semaphore.signal()
