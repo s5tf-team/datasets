@@ -23,25 +23,21 @@ import TensorFlow
 public struct Iris: S5TFDataset {
     typealias DataLoader = CSVDataLoader
     public static var train: CSVDataLoader {
-        // Download data
-        let semaphore = DispatchSemaphore(value: 0)
-        var csvURL: URL?
-        print("Fetching files... Waiting for the download to finish before continuing...")
-        Downloader().download(fileAt:
-            URL(string: "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")!,
-            cacheName: "iris", fileName: "iris.csv") { url, error in
-            guard let url = url else {
-                if let error = error { print(error) }
-                fatalError("Data could not be downloaded.")
-            }
-            csvURL = url
-            semaphore.signal()
+        let localURL = Downloader.download(
+            fileAt: URL(string: "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")!,
+            cacheName: "iris",
+            fileName: "iris.csv"
+        )
+        guard localURL != nil else {
+            fatalError("File not downloaded correctly.")
         }
-        semaphore.wait()
 
-        // Feed into CSVDataLoader.
-        return CSVDataLoader(fromFileAt: csvURL!,
-                                columnNames: nil,
+        return CSVDataLoader(fromFileAt: localURL!,
+                                columnNames: ["sepal length in cm",
+                                              "sepal width",
+                                              "petal length",
+                                              "petal width",
+                                              "species"],
                                 featureColumnNames: ["sepal length in cm",
                                                     "sepal width",
                                                     "petal length",
