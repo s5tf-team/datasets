@@ -42,87 +42,25 @@ public struct MNISTDataLoader: S5TFDataLoader {
         self.batchSize = batchSize
         self.split = split
 
-        let semaphore = DispatchSemaphore(value: 0)
         let baseURL = "https://storage.googleapis.com/cvdf-datasets/mnist"
         var dataURL: URL? = nil
         var labelURL: URL? = nil
 
-        print("Fetching files... Waiting for the download to finish before continuing...")
-        let downloader = Downloader()
-
-        #if os(macOS)
-            let binaryLocation = "/usr/bin/"
-        #else
-            let binaryLocation = "/bin/"
-        #endif
-
+        print("Fetching files...")
         switch split {
             case .train:
-                downloader.download(fileAt: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
-                                      cacheName: "mnist", fileName: "mnist_train_images") { url, err in
-                                      guard let url = url else {
-                                      fatalError("Data not downloaded.")
-                                      }
-                                      dataURL = url
-                                      semaphore.signal()
-                                    }
-                semaphore.wait()
-                do {
-                    try S5TFUtils.shell(URL(string: binaryLocation + "gunzip")!, ".s5tf-datasets/mnist/mnist_train_images")
-                }
-                catch {
-                    fatalError("Extract command not executed.")
-                }
-                downloader.download(fileAt: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
-                                      cacheName: "mnist", fileName: "mnist_train_labels") { url, err in
-                                      guard let url = url else {
-                                      fatalError("Data not downloaded.")
-                                      }
-                                      labelURL = url
-                                      semaphore.signal()
-                                    }
-                semaphore.wait()
-                do {
-                    try S5TFUtils.shell(URL(string: binaryLocation + "gunzip")!, ".s5tf-datasets/mnist/mnist_train_labels")
-                }
-                catch {
-                    fatalError("Extract command not executed.")
-                }
+                dataURL = S5TFUtils.downloadAndExtract(fileAt: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
+                                                       cacheName: "mnist", fileName: "mnist_train_images")!
+                labelURL = S5TFUtils.downloadAndExtract(fileAt: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
+                                                        cacheName: "mnist", fileName: "mnist_train_labels")!
             case .test:
-                downloader.download(fileAt: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
-                                      cacheName: "mnist", fileName: "mnist_test_images") { url, err in
-                                      guard let url = url else {
-                                      fatalError("Data not downloaded.")
-                                      }
-                                      dataURL = url
-                                      semaphore.signal()
-                                    }
-                semaphore.wait()
-                do {
-                    try S5TFUtils.shell(URL(string: binaryLocation + "gunzip")!, ".s5tf-datasets/mnist/mnist_test_images")
-                }
-                catch {
-                    fatalError("Extract command not executed.")
-                }
-                downloader.download(fileAt: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
-                                      cacheName: "mnist", fileName: "mnist_test_labels") { url, err in
-                                      guard let url = url else {
-                                      fatalError("Data not downloaded.")
-                                      }
-                                      labelURL = url
-                                      semaphore.signal()
-                                    }
-                semaphore.wait()
-                do {
-                    try S5TFUtils.shell(URL(string: binaryLocation + "gunzip")!, ".s5tf-datasets/mnist/mnist_test_labels")
-                }
-                catch {
-                    fatalError("Extract command not executed.")
-                }
+                dataURL = S5TFUtils.downloadAndExtract(fileAt: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
+                                                       cacheName: "mnist", fileName: "mnist_test_images")!
+                labelURL = S5TFUtils.downloadAndExtract(fileAt: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
+                                                        cacheName: "mnist", fileName: "mnist_test_labels")!
             default:
                 fatalError("Split does not exist for this dataset.")
         }
-
     }
 
     private init(batchSize: Int, data: Tensor<UInt8>, labels: Tensor<Int64>) {
