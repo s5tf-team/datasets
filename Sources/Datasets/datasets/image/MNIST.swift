@@ -49,14 +49,14 @@ public struct MNISTDataLoader: S5TFDataLoader {
         print("Fetching files...")
         switch split {
             case .train:
-                dataURL = S5TFUtils.downloadAndExtract(fileAt: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
+                dataURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
                                                        cacheName: "mnist", fileName: "mnist_train_images")!
-                labelURL = S5TFUtils.downloadAndExtract(fileAt: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
+                labelURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
                                                         cacheName: "mnist", fileName: "mnist_train_labels")!
             case .test:
-                dataURL = S5TFUtils.downloadAndExtract(fileAt: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
+                dataURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
                                                        cacheName: "mnist", fileName: "mnist_test_images")!
-                labelURL = S5TFUtils.downloadAndExtract(fileAt: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
+                labelURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
                                                         cacheName: "mnist", fileName: "mnist_test_labels")!
             default:
                 fatalError("Split does not exist for this dataset.")
@@ -70,7 +70,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
     }
 
     public init(split: S5TFSplit) {
-        self.init(split: split, batchSize: 0)
+        self.init(split: split, batchSize: nil)
     }
 
     public func batched(_ batchSize: Int) -> MNISTDataLoader {
