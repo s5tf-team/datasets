@@ -65,8 +65,6 @@ public struct MNISTDataLoader: S5TFDataLoader {
         let rawData = [UInt8](try! Data(contentsOf: URL(string: "file://" + dataURL.absoluteString)!)).dropFirst(16).map(Float.init)
         let rawLabels = [UInt8](try! Data(contentsOf: URL(string: "file://" + labelsURL.absoluteString)!)).dropFirst(8).map(Int32.init)
 
-        print("rawLabels.count: ", rawLabels.count)
-        
         let dataTensor = Tensor<Float>(shape: [rawLabels.count, 28 * 28], scalars: rawData) / 255.0
         let labelsTensor = Tensor<Int32>(rawLabels)
 
