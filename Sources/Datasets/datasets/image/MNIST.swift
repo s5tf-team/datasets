@@ -65,7 +65,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
         let rawData = [UInt8](try! Data(contentsOf: URL(string: "file://" + dataURL.absoluteString)!)).dropFirst(16).map(Float.init)
         let rawLabels = [UInt8](try! Data(contentsOf: URL(string: "file://" + labelsURL.absoluteString)!)).dropFirst(8).map(Int32.init)
 
-        let dataTensor = Tensor<Float>(shape: [rawData.count], scalars: rawData) / 255.0
+        let dataTensor = Tensor<Float>(shape: [rawLabels.count, 28 * 28], scalars: rawData) / 255.0
         let labelsTensor = Tensor<Int32>(rawLabels)
 
         self.init(data: dataTensor, labels: labelsTensor)
@@ -92,11 +92,11 @@ public struct MNISTDataLoader: S5TFDataLoader {
         var batchLabels = [Int32]()
 
         for i in index..<(index + thisBatchSize) {
-            batchFeatures.append(data[i].scalar!)
-            batchLabels.append(labels[i].scalar!)
+            batchFeatures.append(contentsOf: data[i].scalars)
+            batchLabels.append(contentsOf: labels[i].scalars)
         }
 
-        let data = Tensor<Float>(batchFeatures).reshaped(to: TensorShape(thisBatchSize, 1))
+        let data = Tensor<Float>(batchFeatures).reshaped(to: TensorShape(thisBatchSize, 28 * 28))
         let labels = Tensor<Int32>(batchLabels)
 
         self.index += thisBatchSize
