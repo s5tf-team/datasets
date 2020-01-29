@@ -7,9 +7,19 @@ protocol S5TFDataset where DataLoader: S5TFDataLoader {
     static var train: DataLoader { get }
 }
 
+public enum S5TFSplit {
+    case train
+    case validation
+    case test
+}
+
 public struct S5TFDatasetInfo {
-    var name: String
-    var version: String
-    var description: String
-    var homepage: URL
+    let name: String
+    let version: String
+    let description: String
+    let homepage: URL
+    let numberOfTrainExamples: Int
+    let numberOfValidExamples: Int
+    let numberOfTestExamples: Int
+    let numberOfFeatures: Int
 }

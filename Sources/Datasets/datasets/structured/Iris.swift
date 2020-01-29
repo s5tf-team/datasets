@@ -45,7 +45,7 @@ public struct Iris: S5TFDataset {
                                 labelColumnNames: ["species"])
     }
 
-    public static var info = irisInfo
+    public static let info = irisInfo
     public static let numberOfTrainingExamples = 150
     public static let numberOfFeatures = 4
 
@@ -64,5 +64,9 @@ fileprivate let irisInfo = S5TFDatasetInfo(
     plant. One class is linearly separable from the other 2; the latter are NOT
     linearly separable from each other.
     """,
-    homepage: URL(string: "http://archive.ics.uci.edu/ml")!
+    homepage: URL(string: "http://archive.ics.uci.edu/ml")!,
+    numberOfTrainExamples: 150,
+    numberOfValidExamples: 0,
+    numberOfTestExamples: 0,
+    numberOfFeatures: 4
 )
