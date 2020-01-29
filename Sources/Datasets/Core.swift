@@ -1,11 +1,5 @@
 import Foundation
-
-protocol S5TFDataLoader: Sequence, IteratorProtocol {
-    var batchSize: Int { get }
-    var split: S5TFSplit { get }
-    func batched(_ batchSize: Int) -> Self
-    init(split: S5TFSplit, batchSize: Int)
-}
+import S5TF
 
 protocol S5TFDataset where DataLoader: S5TFDataLoader {
     associatedtype DataLoader

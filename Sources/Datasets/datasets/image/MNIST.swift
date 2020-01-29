@@ -32,51 +32,82 @@ fileprivate let mnistInfo = S5TFDatasetInfo(
 
 public struct MNISTDataLoader: S5TFDataLoader {
     private var index = 0
+    public let count: Int
 
-    let split: S5TFSplit
-    let batchSize: Int
-    let data: Tensor<UInt8>
-    let labels: Tensor<Int64>
+    public let split: S5TFSplit
+    public let batchSize: Int?
 
-    internal init(split: S5TFSplit, batchSize: Int) {
-        self.batchSize = batchSize
+    private let data: Tensor<Float>
+    private let labels: Tensor<Int32>
+
+    private init(split: S5TFSplit, data: Tensor<Float>, labels: Tensor<Int32>, batchSize: Int? = nil) {
         self.split = split
-
-        let baseURL = "https://storage.googleapis.com/cvdf-datasets/mnist"
-        var dataURL: URL? = nil
-        var labelURL: URL? = nil
-
-        print("Fetching files...")
-        switch split {
-            case .train:
-                dataURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
-                                                       cacheName: "mnist", fileName: "mnist_train_images")!
-                labelURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
-                                                        cacheName: "mnist", fileName: "mnist_train_labels")!
-            case .test:
-                dataURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
-                                                       cacheName: "mnist", fileName: "mnist_test_images")!
-                labelURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
-                                                        cacheName: "mnist", fileName: "mnist_test_labels")!
-            default:
-                fatalError("Split does not exist for this dataset.")
-        }
-    }
-
-    private init(batchSize: Int, data: Tensor<UInt8>, labels: Tensor<Int64>) {
-        self.batchSize = batchSize
         self.data = data
         self.labels = labels
+        self.batchSize = batchSize
+        self.count = data.shape.dimensions.first!
     }
 
     public init(split: S5TFSplit) {
-        self.init(split: split, batchSize: nil)
+        let baseURL = "https://storage.googleapis.com/cvdf-datasets/mnist"
+        var dataURL: URL
+        var labelsURL: URL
+
+        switch split {
+            case .train:
+                dataURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/train-images-idx3-ubyte.gz")!,
+                                                       cacheName: "mnist", fileName: "train-images.gz")!
+                labelsURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/train-labels-idx1-ubyte.gz")!,
+                                                         cacheName: "mnist", fileName: "train-labels.gz")!
+            case .test:
+                dataURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/t10k-images-idx3-ubyte.gz")!,
+                                                       cacheName: "mnist", fileName: "test-images.gz")!
+                labelsURL = S5TFUtils.downloadAndExtract(remoteURL: URL(string: baseURL + "/t10k-labels-idx1-ubyte.gz")!,
+                                                         cacheName: "mnist", fileName: "test-labels.gz")!
+            default:
+                fatalError("Split does not exist for this dataset.")
+        }
+
+        let rawData = [UInt8](try! Data(contentsOf: URL(string: "file://" + dataURL.absoluteString)!)).dropFirst(16).map(Float.init)
+        let rawLabels = [UInt8](try! Data(contentsOf: URL(string: "file://" + labelsURL.absoluteString)!)).dropFirst(8).map(Int32.init)
+
+        let dataTensor = Tensor<Float>(shape: [rawData.count, 28 * 28], scalars: rawData) / 255.0
+        let labelsTensor = Tensor<Int32>(rawLabels)
+
+        self.init(split: split, data: dataTensor, labels: labelsTensor)
     }
 
     public func batched(_ batchSize: Int) -> MNISTDataLoader {
-        return MNISTDataLoader(batchSize: batchSize,
+        return MNISTDataLoader(split: self.split,
                                data: self.data,
-                               labels: self.labels)
-        )
+                               labels: self.labels,
+                               batchSize: batchSize)
+    }
+
+    public mutating func next() -> S5TFLabeledBatch? {
+        guard let batchSize = batchSize else {
+            fatalError("This data loader does not have a batch size. Set a batch size by calling `.batched(...)`")
+        }
+
+        guard index < (count - 1) else {
+            return nil
+        }
+
+        let thisBatchSize = Swift.min(count - index, batchSize)
+
+        var batchFeatures = [Float]()
+        var batchLabels = [Int32]()
+
+        for i in index ..< (index + thisBatchSize) {
+            batchFeatures.append(data[i].scalar!)
+            batchLabels.append(labels[i].scalar!)
+        }
+
+        let data = Tensor<Float>(batchFeatures).reshaped(to: TensorShape(thisBatchSize, 1))
+        let labels = Tensor<Int32>(batchLabels)
+
+        self.index += thisBatchSize
+
+        return S5TFLabeledBatch(data: data, labels: labels)
     }
 }
