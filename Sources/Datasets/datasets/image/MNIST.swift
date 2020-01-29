@@ -25,23 +25,21 @@ fileprivate let mnistInfo = S5TFDatasetInfo(
     version: "0.0.1",
     description: "The MNIST database of handwritten digits. 60000 train examples and 10000 test examples with image and label features.",
     homepage: URL(string: "http://yann.lecun.com/exdb/mnist/")!,
-    numTrain: 60000,
-    numTest: 10000,
-    numFeatures: 10
+    numberOfTrain: 60000,
+    numberOfValid: 0,
+    numberOfTest: 10000,
+    numberOfFeatures: 10
 )
 
 public struct MNISTDataLoader: S5TFDataLoader {
     private var index = 0
     public let count: Int
 
-    public let split: S5TFSplit
     public let batchSize: Int?
-
     private let data: Tensor<Float>
     private let labels: Tensor<Int32>
 
-    private init(split: S5TFSplit, data: Tensor<Float>, labels: Tensor<Int32>, batchSize: Int? = nil) {
-        self.split = split
+    private init(data: Tensor<Float>, labels: Tensor<Int32>, batchSize: Int? = nil) {
         self.data = data
         self.labels = labels
         self.batchSize = batchSize
@@ -50,8 +48,8 @@ public struct MNISTDataLoader: S5TFDataLoader {
 
     public init(split: S5TFSplit) {
         let baseURL = "https://storage.googleapis.com/cvdf-datasets/mnist"
-        var dataURL: URL
-        var labelsURL: URL
+        let dataURL: URL
+        let labelsURL: URL
 
         switch split {
             case .train:
@@ -74,12 +72,11 @@ public struct MNISTDataLoader: S5TFDataLoader {
         let dataTensor = Tensor<Float>(shape: [rawData.count, 28 * 28], scalars: rawData) / 255.0
         let labelsTensor = Tensor<Int32>(rawLabels)
 
-        self.init(split: split, data: dataTensor, labels: labelsTensor)
+        self.init(data: dataTensor, labels: labelsTensor)
     }
 
     public func batched(_ batchSize: Int) -> MNISTDataLoader {
-        return MNISTDataLoader(split: self.split,
-                               data: self.data,
+        return MNISTDataLoader(data: self.data,
                                labels: self.labels,
                                batchSize: batchSize)
     }

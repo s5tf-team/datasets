@@ -18,8 +18,8 @@ public struct S5TFDatasetInfo {
     var version: String
     var description: String
     var homepage: URL
-    var numTrain: Int = 0
-    var numValid: Int = 0
-    var numTest: Int = 0
-    var numFeatures: Int = 0
+    let numberOfTrain: Int
+    let numberOfValid: Int
+    let numberOfTest: Int
+    let numberOfFeatures: Int
 }
