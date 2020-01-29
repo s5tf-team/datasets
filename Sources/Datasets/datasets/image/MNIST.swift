@@ -5,17 +5,13 @@ import TensorFlow
 public struct MNIST: S5TFDataset {
     typealias DataLoader = MNISTDataLoader
     public static var train: MNISTDataLoader {
-        get {
-            return MNISTDataLoader(split: .train)
-        }
+        return MNISTDataLoader(split: .train)
     }
     public static var test: MNISTDataLoader {
-        get {
-            return MNISTDataLoader(split: .test)
-        }
+        return MNISTDataLoader(split: .test)
     }
 
-    public static var info = mnistInfo
+    public static let info = mnistInfo
 
     private init() {}
 }
@@ -69,7 +65,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
         let rawData = [UInt8](try! Data(contentsOf: URL(string: "file://" + dataURL.absoluteString)!)).dropFirst(16).map(Float.init)
         let rawLabels = [UInt8](try! Data(contentsOf: URL(string: "file://" + labelsURL.absoluteString)!)).dropFirst(8).map(Int32.init)
 
-        let dataTensor = Tensor<Float>(shape: [rawData.count, 28 * 28], scalars: rawData) / 255.0
+        let dataTensor = Tensor<Float>(shape: [rawData.count], scalars: rawData) / 255.0
         let labelsTensor = Tensor<Int32>(rawLabels)
 
         self.init(data: dataTensor, labels: labelsTensor)
@@ -95,7 +91,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
         var batchFeatures = [Float]()
         var batchLabels = [Int32]()
 
-        for i in index ..< (index + thisBatchSize) {
+        for i in index..<(index + thisBatchSize) {
             batchFeatures.append(data[i].scalar!)
             batchLabels.append(labels[i].scalar!)
         }
