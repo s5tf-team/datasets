@@ -21,9 +21,9 @@ fileprivate let mnistInfo = S5TFDatasetInfo(
     version: "0.0.1",
     description: "The MNIST database of handwritten digits. 60000 train examples and 10000 test examples with image and label features.",
     homepage: URL(string: "http://yann.lecun.com/exdb/mnist/")!,
-    numberOfTrain: 60000,
-    numberOfValid: 0,
-    numberOfTest: 10000,
+    numberOfTrainExamples: 60000,
+    numberOfValidExamples: 0,
+    numberOfTestExamples: 10000,
     numberOfFeatures: 10
 )
 

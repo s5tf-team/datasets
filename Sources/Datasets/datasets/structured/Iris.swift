@@ -65,8 +65,8 @@ fileprivate let irisInfo = S5TFDatasetInfo(
     linearly separable from each other.
     """,
     homepage: URL(string: "http://archive.ics.uci.edu/ml")!,
-    numberOfTrain: 150,
-    numberOfValid: 0,
-    numberOfTest: 0,
+    numberOfTrainExamples: 150,
+    numberOfValidExamples: 0,
+    numberOfTestExamples: 0,
     numberOfFeatures: 4
 )

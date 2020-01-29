@@ -18,8 +18,8 @@ public struct S5TFDatasetInfo {
     let version: String
     let description: String
     let homepage: URL
-    let numberOfTrain: Int
-    let numberOfValid: Int
-    let numberOfTest: Int
+    let numberOfTrainExamples: Int
+    let numberOfValidExamples: Int
+    let numberOfTestExamples: Int
     let numberOfFeatures: Int
 }
