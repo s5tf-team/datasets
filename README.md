@@ -9,7 +9,7 @@ for batch in MNIST.train.batched(32) {
     print(batch.data, batch.labels)
 }
 ```
-View an interactive Google Colab example [here](https://colab.research.google.com/drive/12ny4R0RyUajdTaq42rqeBmqHIIo6FzKc).
+View an interactive Google Colab example [here](https://colab.research.google.com/github/s5tf-team/examples/blob/master/Iris_Classification_S5TF.ipynb).
 
 ## Contributing ❤️
 Thanks for even considering contributing.
