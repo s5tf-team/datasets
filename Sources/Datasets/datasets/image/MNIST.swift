@@ -1,3 +1,17 @@
+// MNIST
+//
+// The MNIST database of handwritten digits. 60000 train examples and 10000
+// test examples with image and label features.
+// 
+// BibTeX citation:
+// @article{lecun2010mnist,
+//   title={MNIST handwritten digit database},
+//   author={LeCun, Yann and Cortes, Corinna and Burges, CJ},
+//   journal={ATT Labs [Online]. Available: http://yann.lecun.com/exdb/mnist},
+//   volume={2},
+//   year={2010}
+// }
+
 import Foundation
 import S5TF
 import TensorFlow
