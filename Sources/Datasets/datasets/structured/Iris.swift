@@ -22,7 +22,7 @@ import TensorFlow
 
 public struct Iris: S5TFDataset {
     typealias DataLoader = CSVDataLoader
-    public static var train: CSVDataLoader {
+    public static var train: CSVDataLoader<S5TFCategoricalBatch> {
         let localURL = Downloader.download(
             fileAt: URL(string: "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")!,
             cacheName: "iris",
@@ -32,17 +32,17 @@ public struct Iris: S5TFDataset {
             fatalError("File not downloaded correctly.")
         }
 
-        return CSVDataLoader(fromFileAt: localURL!,
-                                columnNames: ["sepal length in cm",
-                                              "sepal width",
-                                              "petal length",
-                                              "petal width",
-                                              "species"],
-                                featureColumnNames: ["sepal length in cm",
-                                                    "sepal width",
-                                                    "petal length",
-                                                    "petal width"],
-                                labelColumnNames: ["species"])
+        return CSVDataLoader<S5TFCategoricalBatch>(fromFileAt: localURL!.absoluteString,
+                                                   columnNames: ["sepal length in cm",
+                                                               "sepal width",
+                                                               "petal length",
+                                                               "petal width",
+                                                               "species"],
+                                                   featureColumnNames: ["sepal length in cm",
+                                                                       "sepal width",
+                                                                       "petal length",
+                                                                       "petal width"],
+                                                   labelColumnNames: ["species"])
     }
 
     public static let info = irisInfo
