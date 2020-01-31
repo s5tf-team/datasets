@@ -1,0 +1,47 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/rickwierenga/workspace/gci/src/s/Datasets/Sources/Datasets/Core.swift",
+      "line": 10,
+      "symbol": "S5TFDatasetInfo",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/rickwierenga/workspace/gci/src/s/Datasets/Sources/Datasets/datasets/structured/Iris.swift",
+      "line": 23,
+      "symbol": "Iris",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/rickwierenga/workspace/gci/src/s/Datasets/Sources/Datasets/datasets/structured/Iris.swift",
+      "line": 25,
+      "symbol": "Iris.train",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/rickwierenga/workspace/gci/src/s/Datasets/Sources/Datasets/datasets/structured/Iris.swift",
+      "line": 48,
+      "symbol": "Iris.info",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/rickwierenga/workspace/gci/src/s/Datasets/Sources/Datasets/datasets/structured/Iris.swift",
+      "line": 49,
+      "symbol": "Iris.numberOfTrainingExamples",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/rickwierenga/workspace/gci/src/s/Datasets/Sources/Datasets/datasets/structured/Iris.swift",
+      "line": 50,
+      "symbol": "Iris.numberOfFeatures",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/rickwierenga/workspace/gci/src/s/Datasets"
+}
