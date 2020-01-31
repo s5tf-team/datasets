@@ -16,17 +16,6 @@ public struct MNIST: S5TFDataset {
     private init() {}
 }
 
-fileprivate let mnistInfo = S5TFDatasetInfo(
-    name: "mnist",
-    version: "0.0.1",
-    description: "The MNIST database of handwritten digits. 60000 train examples and 10000 test examples with image and label features.",
-    homepage: URL(string: "http://yann.lecun.com/exdb/mnist/")!,
-    numberOfTrainExamples: 60000,
-    numberOfValidExamples: 0,
-    numberOfTestExamples: 10000,
-    numberOfFeatures: 10
-)
-
 public struct MNISTDataLoader: S5TFDataLoader {
     private var index = 0
     public let count: Int
@@ -48,22 +37,32 @@ public struct MNISTDataLoader: S5TFDataLoader {
         let labelsURL: URL
 
         switch split {
-            case .train:
-                dataURL = S5TFUtils.downloadAndExtract(remoteURL: baseURL.appendingPathComponent("train-images-idx3-ubyte.gz"),
-                                                       cacheName: "mnist", fileName: "train-images.gz")!
-                labelsURL = S5TFUtils.downloadAndExtract(remoteURL: baseURL.appendingPathComponent("train-labels-idx1-ubyte.gz"),
-                                                         cacheName: "mnist", fileName: "train-labels.gz")!
-            case .test:
-                dataURL = S5TFUtils.downloadAndExtract(remoteURL: baseURL.appendingPathComponent("t10k-images-idx3-ubyte.gz"),
-                                                       cacheName: "mnist", fileName: "test-images.gz")!
-                labelsURL = S5TFUtils.downloadAndExtract(remoteURL: baseURL.appendingPathComponent("t10k-labels-idx1-ubyte.gz"),
-                                                         cacheName: "mnist", fileName: "test-labels.gz")!
-            default:
-                fatalError("Split does not exist for this dataset.")
+        case .train:
+            dataURL = S5TFUtils.downloadAndExtract(
+                remoteURL: baseURL.appendingPathComponent("train-images-idx3-ubyte.gz"),
+                cacheName: "mnist", fileName: "train-images.gz")!
+            labelsURL = S5TFUtils.downloadAndExtract(
+                remoteURL: baseURL.appendingPathComponent("train-labels-idx1-ubyte.gz"),
+                cacheName: "mnist", fileName: "train-labels.gz")!
+        case .test:
+            dataURL = S5TFUtils.downloadAndExtract(
+                remoteURL: baseURL.appendingPathComponent("t10k-images-idx3-ubyte.gz"),
+                cacheName: "mnist", fileName: "test-images.gz")!
+            labelsURL = S5TFUtils.downloadAndExtract(
+                remoteURL: baseURL.appendingPathComponent("t10k-labels-idx1-ubyte.gz"),
+                cacheName: "mnist", fileName: "test-labels.gz")!
+        default:
+            fatalError("Split does not exist for this dataset.")
         }
 
-        let rawData = [UInt8](try! Data(contentsOf: URL(string: "file://" + dataURL.absoluteString)!)).dropFirst(16).map(Float.init)
-        let rawLabels = [UInt8](try! Data(contentsOf: URL(string: "file://" + labelsURL.absoluteString)!)).dropFirst(8).map(Int32.init)
+        // swiftlint:disable:next force_try
+        let rawData = [UInt8](try! Data(contentsOf: URL(string: "file://" + dataURL.absoluteString)!))
+            .dropFirst(16)
+            .map(Float.init)
+        // swiftlint:disable:next force_try
+        let rawLabels = [UInt8](try! Data(contentsOf: URL(string: "file://" + labelsURL.absoluteString)!))
+            .dropFirst(8)
+            .map(Int32.init)
 
         let dataTensor = Tensor<Float>(shape: [rawLabels.count, 28 * 28], scalars: rawData) / 255.0
         let labelsTensor = Tensor<Int32>(rawLabels)
@@ -91,6 +90,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
         var batchFeatures = [Float]()
         var batchLabels = [Int32]()
 
+        // swiftlint:disable:next identifier_name
         for i in index..<(index + thisBatchSize) {
             batchFeatures.append(contentsOf: data[i].scalars)
             batchLabels.append(contentsOf: labels[i].scalars)
@@ -104,3 +104,16 @@ public struct MNISTDataLoader: S5TFDataLoader {
         return S5TFLabeledBatch(data: data, labels: labels)
     }
 }
+
+// swiftlint:disable:next private_over_fileprivate
+fileprivate let mnistInfo = S5TFDatasetInfo(
+    name: "mnist",
+    version: "0.0.1",
+    description: "The MNIST database of handwritten digits. 60000 train examples and 10000 " +
+                 "test examples with image and label features.",
+    homepage: URL(string: "http://yann.lecun.com/exdb/mnist/")!,
+    numberOfTrainExamples: 60000,
+    numberOfValidExamples: 0,
+    numberOfTestExamples: 10000,
+    numberOfFeatures: 10
+)
