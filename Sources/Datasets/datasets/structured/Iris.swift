@@ -32,17 +32,19 @@ public struct Iris: S5TFDataset {
             fatalError("File not downloaded correctly.")
         }
 
-        return CSVDataLoader<S5TFCategoricalBatch>(fromFileAt: localURL!.absoluteString,
-                                                   columnNames: ["sepal length in cm",
-                                                               "sepal width",
-                                                               "petal length",
-                                                               "petal width",
-                                                               "species"],
-                                                   featureColumnNames: ["sepal length in cm",
-                                                                       "sepal width",
-                                                                       "petal length",
-                                                                       "petal width"],
-                                                   labelColumnNames: ["species"])
+        return CSVDataLoader<S5TFCategoricalBatch>(
+            fromFileAt: localURL!.absoluteString,
+            columnNames: ["sepal length in cm",
+                          "sepal width",
+                          "petal length",
+                          "petal width",
+                          "species"],
+            inputColumnNames: ["sepal length in cm",
+                               "sepal width",
+                               "petal length",
+                               "petal width"],
+            outputColumnNames: ["species"]
+        )
     }
 
     public static let info = irisInfo
