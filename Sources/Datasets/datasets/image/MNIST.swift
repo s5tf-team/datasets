@@ -18,6 +18,7 @@ import TensorFlow
 
 public struct MNIST: S5TFDataset {
     typealias DataLoader = MNISTDataLoader
+
     public static var train: MNISTDataLoader {
         return MNISTDataLoader(split: .train)
     }
@@ -90,7 +91,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
                                batchSize: batchSize)
     }
 
-    public mutating func next() -> S5TFLabeledBatch? {
+    public mutating func next() -> S5TFCategoricalBatch? {
         guard let batchSize = batchSize else {
             fatalError("This data loader does not have a batch size. Set a batch size by calling `.batched(...)`")
         }
@@ -115,7 +116,7 @@ public struct MNISTDataLoader: S5TFDataLoader {
 
         self.index += thisBatchSize
 
-        return S5TFLabeledBatch(data: data, labels: labels)
+        return S5TFCategoricalBatch(data: data, labels: labels)
     }
 }
 
