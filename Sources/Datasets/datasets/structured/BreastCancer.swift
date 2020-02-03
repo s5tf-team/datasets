@@ -1,4 +1,4 @@
-// The Iris dataset.
+// The Breast Cancer dataset.
 //
 // Features are computed from a digitized image of a fine needle
 // aspirate (FNA) of a breast mass.  They describe
@@ -97,7 +97,7 @@ public struct BreastCancer: S5TFDataset {
         )
     }
 
-    public static let info = brestCancerInfo
+    public static let info = breastCancerInfo
     public static let numberOfTrainingExamples = 150
     public static let numberOfFeatures = 4
 
@@ -105,7 +105,7 @@ public struct BreastCancer: S5TFDataset {
 }
 
 // swiftlint:disable:next private_over_fileprivate
-fileprivate let brestCancerInfo = S5TFDatasetInfo(
+fileprivate let breastCancerInfo = S5TFDatasetInfo(
     name: "Breast Cancer",
     version: "0.0.1",
     description: """
